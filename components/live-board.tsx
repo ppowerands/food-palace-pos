@@ -156,7 +156,7 @@ export function LiveBoard({
       </div>
       {message && <p role="status" className="rounded-lg bg-gold-50 px-3 py-2 text-sm text-gold-600">{message}</p>}
 
-      <div className="-mx-3 flex gap-3 overflow-x-auto px-3 pb-3 sm:mx-0 sm:px-0">
+      <div className="-mx-3 flex gap-3 flex-wrap px-3 pb-3 sm:mx-0 sm:px-0">
         {BOARD_COLUMNS.map((col) => {
           const list = orders.filter((o) => statusOf(o) === col);
           const canDrop = !!dragging && targetsFor(dragging).includes(col);
@@ -171,7 +171,7 @@ export function LiveBoard({
                 setOver(null); setDragId(null);
                 if (o && targetsFor(o).includes(col)) move(o, col);
               }}
-              className={cn("w-[280px] shrink-0 rounded-xl bg-paper-100 p-2 transition", canDrop && "ring-2 ring-gold-400/60", over === col && canDrop && "bg-gold-50 ring-gold-500")}
+              className={cn("flex-1 min-w-[220px] rounded-xl bg-paper-100 p-2 transition", canDrop && "ring-2 ring-gold-400/60", over === col && canDrop && "bg-gold-50 ring-gold-500")}
             >
               <header className="mb-2 flex items-center justify-between px-1">
                 <OrderStatusBadge status={col} />
