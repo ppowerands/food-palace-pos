@@ -95,7 +95,7 @@ export function LiveBoard({
       setReason(""); setRefund(true); setDialogError(null); setCancelFor(o);
       return;
     }
-    if (to === "COMPLETED" && o.balance > 0 && !window.confirm(`${o.code} still has ${money(o.balance)} unpaid. Complete it anyway?`)) return;
+    
     setOverrides((p) => ({ ...p, [o.id]: to }));
     startTransition(async () => {
       const fd = new FormData();
