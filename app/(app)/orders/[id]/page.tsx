@@ -87,7 +87,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
                   </span>
                   <span>{money(Number(item.totalPrice))}</span>
                 </li>
-              ))
+              ))}
             </ul>
             <div className="mt-4 border-t border-paper-200 pt-3 space-y-1 text-sm">
               <div className="flex justify-between">
