@@ -89,7 +89,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
                   <span>
                     {item.quantity}× {item.productName} {item.variantName ? `(${item.variantName})` : ""}
                   </span>
-                  <span>{money(Number(item.unitPrice) * item.quantity)}</span>
+                  <span>{money(Number(item.totalPrice))}</span>
                 </li>
               ))}
             </ul>
