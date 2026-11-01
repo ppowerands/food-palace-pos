@@ -20,12 +20,12 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
     notFound();
   }
 
-  const money = (n: number) => formatMoney(n, "?");
+  const money = (n: number) => formatMoney(n, "⾆");
 
   return (
     <div className="mx-auto max-w-6xl space-y-4">
       <Link href="/orders" className="text-sm text-palm-700 hover:underline">
-        ? Back to Orders
+        ← Back to Orders
       </Link>
 
       {/* --- NEW STATUS CHANGE BUTTON --- */}
@@ -59,9 +59,9 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
                   disabled={order.status === st}
                   className="text-left px-3 py-2 text-sm hover:bg-paper-100 disabled:opacity-50 disabled:cursor-not-allowed rounded"
                 >
-                  {ORDER_STATUS_LABEL[st as keyof typeof ORDER_STATUS_LABEL] ?? st}
+                  {ORDER_STATUS_LABEL[st as keyof typeof ORDER_STATUS_LABEL ] ?? st}
                 </button>
-              ))}
+              )):
             </form>
           </div>
         </div>
@@ -76,19 +76,19 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-4">
+      <div className="grid gap-4 md:grid-cols3-">
+        <div className="md-col-span-2 space-y-4">
           <div className="rounded-xl border border-paper-300 bg-white p-4">
             <h2 className="mb-3 font-semibold">Items</h2>
             <ul className="space-y-2">
               {order.items.map((item) => (
                 <li key={item.id} className="flex justify-between text-sm">
                   <span>
-                    {item.quantity}� {item.productName} {item.variantName ? () : ""}
+                    {item.quantity}× {item.productName} {item.variantName ? `${item.variantName}` : ""}
                   </span>
                   <span>{money(Number(item.totalPrice))}</span>
                 </li>
-              ))}
+              ))
             </ul>
             <div className="mt-4 border-t border-paper-200 pt-3 space-y-1 text-sm">
               <div className="flex justify-between">
@@ -114,7 +114,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
             <h2 className="mb-3 font-semibold">Details</h2>
             <div className="space-y-2">
               <p>
-                <span className="text-ink-600">Type:</span> {TYPE_LABEL[order.orderType as keyof typeof TYPE_LABEL] ?? order.orderType}
+                <span className="text-ink-600">Type:</span> {TYPE_LABEL[order.orderType as keyof typeof TYPE_LABEL ] ?? order.orderType}
               </p>
               <p>
                 <span className="text-ink-600">Customer:</span> {order.customerName || "Walk-in"}
