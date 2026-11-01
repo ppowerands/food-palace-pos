@@ -20,7 +20,6 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
     notFound();
   }
 
-  // Using the Naira symbol directly to avoid encoding issues
   const money = (n: number) => formatMoney(n, "₦");
 
   return (
@@ -34,73 +33,44 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
         </Link>
       </div>
 
-      <div className="mb-4 p-4 border border-paper-300 rounded-xl bg-white shadow-sm flex items-center justify-between">
+      {/* STATUS CHANGE SECTION */}
+      <div className="mb-4 p-4 border border-paper-300 rounded-xl bg-white shadow-sm flex flex-wrap items-center justify-between gap-4">
         <div>
           <h3 className="font-semibold text-lg">Order Status</h3>
           <p className="text-sm text-ink-600 flex items-center gap-2">
             Current: <OrderStatusBadge status={order.status} />
           </p>
-<div className="flex items-center gap-2">
-  <span className="text-sm font-semibold text-ink-600 hidden sm:block">Status:</span>
-  <form action={async (formData: FormData) => {
-    "use server";
-    const newStatus = formData.get("status") as string;
-    if (!newStatus) return;
-    const fd = new FormData();
-    fd.set("id", order.id);
-    fd.set("from", order.status);
-    fd.set("to", newStatus);
-    await changeOrderStatus(undefined, fd);
-  }}>
-    <select 
-      name="status"
-      defaultValue=""
-      onChange={(e) => {
-        if (e.target.value) {
-          e.target.form?.requestSubmit();
-        }
-      }}
-      className="border border-paper-300 rounded-lg px-3 py-2 bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-palm-700 cursor-pointer"
-    >
-      <option value="" disabled>Change Status</option>
-      {["PENDING", "ACCEPTED", "READY", "COMPLETED", "CANCELLED"].map((st) => (
-        <option key={st} value={st} disabled={order.status === st}>
-          {ORDER_STATUS_LABEL[st as keyof typeof ORDER_STATUS_LABEL] ?? st}
-        </option>
-      ))}
-    </select>
-  </form>
-</div>
         </div>
-        <div className="relative group inline-block">
-          <button className="btn btn-secondary flex items-center gap-2">
-            Change Status
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-          </button>
-          <div className="absolute right-0 mt-1 w-40 bg-white border border-paper-300 rounded-lg shadow-lg hidden group-hover:block z-50">
-            <form action={async (formData: FormData) => {
-              "use server";
-              const newStatus = formData.get("status") as string;
-              const fd = new FormData();
-              fd.set("id", order.id);
-              fd.set("from", order.status);
-              fd.set("to", newStatus);
-              await changeOrderStatus(undefined, fd);
-            }} className="flex flex-col p-1">
-              {["PENDING", "ACCEPTED", "READY", "COMPLETED", "CANCELLED"].map((st) => (
-                <button 
-                  key={st}
-                  name="status" 
-                  value={st} 
-                  disabled={order.status === st}
-                  className="text-left px-3 py-2 text-sm hover:bg-paper-100 disabled:opacity-50 disabled:cursor-not-allowed rounded"
-                >
-                  {ORDER_STATUS_LABEL[st as keyof typeof ORDER_STATUS_LABEL] ?? st}
-                </button>
-              ))}
-            </form>
-          </div>
-        </div>
+        
+        {/* WORKING DROPDOWN */}
+        <form action={async (formData: FormData) => {
+          "use server";
+          const newStatus = formData.get("status") as string;
+          if (!newStatus) return;
+          const fd = new FormData();
+          fd.set("id", order.id);
+          fd.set("from", order.status);
+          fd.set("to", newStatus);
+          await changeOrderStatus(undefined, fd);
+        }}>
+          <select 
+            name="status"
+            defaultValue=""
+            onChange={(e) => {
+              if (e.target.value) {
+                e.target.form?.requestSubmit();
+              }
+            }}
+            className="border border-paper-300 rounded-lg px-3 py-2 bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-palm-700 cursor-pointer"
+          >
+            <option value="" disabled>Change Status</option>
+            {["PENDING", "ACCEPTED", "READY", "COMPLETED", "CANCELLED"].map((st) => (
+              <option key={st} value={st} disabled={order.status === st}>
+                {ORDER_STATUS_LABEL[st as keyof typeof ORDER_STATUS_LABEL] ?? st}
+              </option>
+            ))}
+          </select>
+        </form>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -121,7 +91,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
                   <span>
                     {item.quantity}× {item.productName} {item.variantName ? `(${item.variantName})` : ""}
                   </span>
-                  {/* Fixed the price math and removed the encoding issues */}
+                  {/* FIXED ITEM MATH HERE */}
                   <span>{money(Number(item.unitPrice) * item.quantity)}</span>
                 </li>
               ))}
@@ -170,4 +140,3 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
     </div>
   );
 }
-
