@@ -1,23 +1,26 @@
-// A short two-tone chime using the browser's audio engine (no sound file needed).
 export function beep() {
   try {
-    const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    const ctx = new Ctx();
-    [880, 1175].forEach((freq, i) => {
+    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    
+    // Play 3 loud beeps in a row
+    [0, 0.15, 0.3].forEach((delay) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.frequency.value = freq;
       osc.connect(gain);
       gain.connect(ctx.destination);
-      const t = ctx.currentTime + i * 0.18;
-      gain.gain.setValueAtTime(0.0001, t);
-      gain.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
-      osc.start(t);
-      osc.stop(t + 0.18);
+      
+      osc.type = 'square'; // Square wave is louder and more piercing
+      osc.frequency.value = 800; // High pitch
+      
+      gain.gain.setValueAtTime(1, ctx.currentTime + delay); // Full volume
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + delay + 0.1); // Quick fade
+      
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + 0.1);
     });
-    setTimeout(() => void ctx.close(), 800);
-  } catch {
-    /* sound is a nicety; ignore */
+  } catch (e) {
+    console.error("Audio error:", e);
   }
 }
