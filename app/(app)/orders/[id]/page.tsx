@@ -33,7 +33,6 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
         </Link>
       </div>
 
-      {/* STATUS CHANGE SECTION */}
       <div className="mb-4 p-4 border border-paper-300 rounded-xl bg-white shadow-sm flex flex-wrap items-center justify-between gap-4">
         <div>
           <h3 className="font-semibold text-lg">Order Status</h3>
@@ -42,7 +41,6 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
           </p>
         </div>
         
-        {/* WORKING DROPDOWN */}
         <form action={async (formData: FormData) => {
           "use server";
           const newStatus = formData.get("status") as string;
@@ -91,7 +89,6 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
                   <span>
                     {item.quantity}× {item.productName} {item.variantName ? `(${item.variantName})` : ""}
                   </span>
-                  {/* FIXED ITEM MATH HERE */}
                   <span>{money(Number(item.unitPrice) * item.quantity)}</span>
                 </li>
               ))}
