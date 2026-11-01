@@ -40,6 +40,37 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
           <p className="text-sm text-ink-600 flex items-center gap-2">
             Current: <OrderStatusBadge status={order.status} />
           </p>
+<div className="flex items-center gap-2">
+  <span className="text-sm font-semibold text-ink-600 hidden sm:block">Status:</span>
+  <form action={async (formData: FormData) => {
+    "use server";
+    const newStatus = formData.get("status") as string;
+    if (!newStatus) return;
+    const fd = new FormData();
+    fd.set("id", order.id);
+    fd.set("from", order.status);
+    fd.set("to", newStatus);
+    await changeOrderStatus(undefined, fd);
+  }}>
+    <select 
+      name="status"
+      defaultValue=""
+      onChange={(e) => {
+        if (e.target.value) {
+          e.target.form?.requestSubmit();
+        }
+      }}
+      className="border border-paper-300 rounded-lg px-3 py-2 bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-palm-700 cursor-pointer"
+    >
+      <option value="" disabled>Change Status</option>
+      {["PENDING", "ACCEPTED", "READY", "COMPLETED", "CANCELLED"].map((st) => (
+        <option key={st} value={st} disabled={order.status === st}>
+          {ORDER_STATUS_LABEL[st as keyof typeof ORDER_STATUS_LABEL] ?? st}
+        </option>
+      ))}
+    </select>
+  </form>
+</div>
         </div>
         <div className="relative group inline-block">
           <button className="btn btn-secondary flex items-center gap-2">
@@ -91,7 +122,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
                     {item.quantity}× {item.productName} {item.variantName ? `(${item.variantName})` : ""}
                   </span>
                   {/* Fixed the price math and removed the encoding issues */}
-                  <span>{money(Number(item.totalPrice))}</span>
+                  <span>{money(Number(item.unitPrice) * item.quantity)}</span>
                 </li>
               ))}
             </ul>
@@ -139,3 +170,4 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
     </div>
   );
 }
+
