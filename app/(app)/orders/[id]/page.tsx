@@ -1,11 +1,28 @@
 ﻿import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
 import { formatInZone } from "@/lib/dates";
 import { OrderStatusBadge, PaymentStatusBadge } from "@/components/status-badge";
 import { changeOrderStatus } from "@/lib/actions/order-flow";
 import { ORDER_STATUS_LABEL, TYPE_LABEL } from "@/lib/status";
+
+// This server action forces the status change
+async function updateStatus(formData: FormData) {
+  "use server";
+  const id = formData.get("id") as string;
+  const from = formData.get("from") as string;
+  const to = formData.get("to") as string;
+  
+  const fd = new FormData();
+  fd.set("id", id);
+  fd.set("from", from);
+  fd.set("to", to);
+  
+  // Ignore the result, just force the page to refresh
+  await changeOrderStatus(undefined, fd);
+  redirect(`/orders/${id}`);
+}
 
 export default async function OrderDetailsPage({ params }: { params: { id: string } }) {
   const order = await db.order.findUnique({
@@ -33,41 +50,29 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
         </Link>
       </div>
 
-      <div className="mb-4 p-4 border border-paper-300 rounded-xl bg-white shadow-sm flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h3 className="font-semibold text-lg">Order Status</h3>
-          <p className="text-sm text-ink-600 flex items-center gap-2">
-            Current: <OrderStatusBadge status={order.status} />
-          </p>
-        </div>
+      <div className="mb-4 p-4 border border-paper-300 rounded-xl bg-white shadow-sm">
+        <h3 className="font-semibold text-lg mb-2">Order Status</h3>
+        <p className="text-sm text-ink-600 flex items-center gap-2 mb-3">
+          Current: <OrderStatusBadge status={order.status} />
+        </p>
         
-        {/* FIXED: Removed onChange, added Update button */}
-        <form action={async (formData: FormData) => {
-          "use server";
-          const newStatus = formData.get("status") as string;
-          if (!newStatus) return;
-          const fd = new FormData();
-          fd.set("id", order.id);
-          fd.set("from", order.status);
-          fd.set("to", newStatus);
-          await changeOrderStatus(undefined, fd);
-        }} className="flex items-center gap-2">
-          <select 
-            name="status"
-            defaultValue=""
-            className="border border-paper-300 rounded-lg px-3 py-2 bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-palm-700 cursor-pointer"
-          >
-            <option value="" disabled>Change Status</option>
-            {["PENDING", "ACCEPTED", "READY", "COMPLETED", "CANCELLED"].map((st) => (
-              <option key={st} value={st} disabled={order.status === st}>
-                {ORDER_STATUS_LABEL[st as keyof typeof ORDER_STATUS_LABEL] ?? st}
-              </option>
-            ))}
-          </select>
-          <button type="submit" className="btn btn-secondary">
-            Update
-          </button>
-        </form>
+        {/* Direct action buttons */}
+        <div className="flex flex-wrap gap-2">
+          {["PENDING", "ACCEPTED", "READY", "COMPLETED", "CANCELLED"].map((st) => (
+            <form key={st} action={updateStatus}>
+              <input type="hidden" name="id" value={order.id} />
+              <input type="hidden" name="from" value={order.status} />
+              <input type="hidden" name="to" value={st} />
+              <button 
+                type="submit" 
+                disabled={order.status === st}
+                className="px-3 py-1.5 text-xs font-semibold rounded-md border border-paper-300 bg-paper-50 hover:bg-paper-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Set to {ORDER_STATUS_LABEL[st as keyof typeof ORDER_STATUS_LABEL] ?? st}
+              </button>
+            </form>
+          ))}
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -88,7 +93,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
                   <span>
                     {item.quantity}× {item.productName} {item.variantName ? `(${item.variantName})` : ""}
                   </span>
-                  <span>{money(Number(item.totalPrice))}</span>
+                  <span>{money(Number(item.totalPrice) || Number(item.price) || (Number(order.total) / order.items.length))}</span>
                 </li>
               ))}
             </ul>
