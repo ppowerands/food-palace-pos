@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { requirePermission } from "@/lib/auth";
@@ -120,3 +120,4 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
     </div>
   );
 }
+
