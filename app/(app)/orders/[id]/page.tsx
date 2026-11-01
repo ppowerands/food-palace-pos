@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
@@ -20,12 +20,12 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
     notFound();
   }
 
-  const money = (n: number) => formatMoney(n, "₢");
+  const money = (n: number) => formatMoney(n, "â‚¢");
 
   return (
     <div className="mx-auto max-w-6xl space-y-4">
       <Link href="/orders" className="text-sm text-palm-700 hover:underline">
-        ← Back to Orders
+        â† Back to Orders
       </Link>
 
       {/* --- STATUS CHANGE BUTTON --- */}
@@ -83,16 +83,16 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
               {order.items.map((item) => (
                 <li key={item.id} className="flex justify-between text-sm">
                   <span>
-                    {item.quantity}× {item.productName} {item.variantName ? `${item.variantName}` : ""}
+                    {item.quantity}Ã— {item.productName} {item.variantName ? `${item.variantName}` : ""}
                   </span>
-                  <span>{money(Number(item.totalPrice))}</span>
+                  <span>{money(Number(item.unitPrice) * item.quantity)}</span>
                 </li>
               ))}
             </ul>
             <div className="mt-4 border-t border-paper-200 pt-3 space-y-1 text-sm">
               <div className="flex justify-between">
                 <span className="text-ink-600">Subtotal</span>
-                <span>{money(Number(order.subtotal))}</span>
+                <span>{money(Number(order.subtotal) / 100)}</span>
               </div>
               {Number(order.deliveryFee) > 0 && (
                 <div className="flex justify-between">
@@ -102,7 +102,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
               )}
               <div className="flex justify-between font-semibold text-base pt-2">
                 <span>Total</span>
-                <span>{money(Number(order.total))}</span>
+                <span>{money(Number(order.total) / 100)}</span>
               </div>
             </div>
           </div>
@@ -133,3 +133,4 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
     </div>
   );
 }
+
