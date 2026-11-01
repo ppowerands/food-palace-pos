@@ -91,24 +91,24 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
                     {item.quantity}× {item.productName} {item.variantName ? `(${item.variantName})` : ""}
                   </span>
                   {/* Fixed the price math and removed the encoding issues */}
-                  <span>{money(Number(item.unitPrice) * item.quantity)}</span>
+                  <span>{money(Number(item.totalPrice))}</span>
                 </li>
               ))}
             </ul>
             <div className="mt-4 border-t border-paper-200 pt-3 space-y-1 text-sm">
               <div className="flex justify-between">
                 <span className="text-ink-600">Subtotal</span>
-                <span>{money(Number(order.subtotal) / 100)}</span>
+                <span>{money(Number(order.subtotal))}</span>
               </div>
               {Number(order.deliveryFee) > 0 && (
                 <div className="flex justify-between">
                   <span className="text-ink-600">Delivery</span>
-                  <span>{money(Number(order.deliveryFee) / 100)}</span>
+                  <span>{money(Number(order.deliveryFee))}</span>
                 </div>
               )}
               <div className="flex justify-between font-semibold text-base pt-2">
                 <span>Total</span>
-                <span>{money(Number(order.total) / 100)}</span>
+                <span>{money(Number(order.total))}</span>
               </div>
             </div>
           </div>
