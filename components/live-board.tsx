@@ -60,7 +60,7 @@ export function LiveBoard({
     if (seen.current) {
       const added = orders.filter((o) => !seen.current!.has(o.id) && o.status === "PENDING").map((o) => o.id);
       if (added.length) {
-        setFresh((p) => new Set([...p, ...added]));
+        setFresh((p) => new Set([...p, ...added])); try { if (localStorage.getItem("fp_sound") === "1") beep(); } catch { /* ignore */ }
         setTimeout(() => setFresh((p) => { const n = new Set(p); added.forEach((i) => n.delete(i)); return n; }), 12_000);
       }
     }
