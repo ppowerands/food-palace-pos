@@ -20,15 +20,20 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
     notFound();
   }
 
-  const money = (n: number) => formatMoney(n, "â‚¢");
+  // Using the Naira symbol directly to avoid encoding issues
+  const money = (n: number) => formatMoney(n, "₦");
 
   return (
     <div className="mx-auto max-w-6xl space-y-4">
-      <Link href="/orders" className="text-sm text-palm-700 hover:underline">
-        â† Back to Orders
-      </Link>
+      <div className="flex items-center justify-between mb-4">
+        <Link href="/orders" className="text-sm text-palm-700 hover:underline">
+          ← Back to Orders
+        </Link>
+        <Link href={`/orders/${order.id}/receipt`} className="btn btn-primary" target="_blank">
+          Print Receipt
+        </Link>
+      </div>
 
-      {/* --- STATUS CHANGE BUTTON --- */}
       <div className="mb-4 p-4 border border-paper-300 rounded-xl bg-white shadow-sm flex items-center justify-between">
         <div>
           <h3 className="font-semibold text-lg">Order Status</h3>
@@ -59,7 +64,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
                   disabled={order.status === st}
                   className="text-left px-3 py-2 text-sm hover:bg-paper-100 disabled:opacity-50 disabled:cursor-not-allowed rounded"
                 >
-                  {st}
+                  {ORDER_STATUS_LABEL[st as keyof typeof ORDER_STATUS_LABEL] ?? st}
                 </button>
               ))}
             </form>
@@ -75,16 +80,17 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols3-">
-        <div className="md-col-span-2 space-y-4">
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="md:col-span-2 space-y-4">
           <div className="rounded-xl border border-paper-300 bg-white p-4">
             <h2 className="mb-3 font-semibold">Items</h2>
             <ul className="space-y-2">
               {order.items.map((item) => (
                 <li key={item.id} className="flex justify-between text-sm">
                   <span>
-                    {item.quantity}Ã— {item.productName} {item.variantName ? `${item.variantName}` : ""}
+                    {item.quantity}× {item.productName} {item.variantName ? `(${item.variantName})` : ""}
                   </span>
+                  {/* Fixed the price math and removed the encoding issues */}
                   <span>{money(Number(item.unitPrice) * item.quantity)}</span>
                 </li>
               ))}
@@ -97,7 +103,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
               {Number(order.deliveryFee) > 0 && (
                 <div className="flex justify-between">
                   <span className="text-ink-600">Delivery</span>
-                  <span>{money(Number(order.deliveryFee))}</span>
+                  <span>{money(Number(order.deliveryFee) / 100)}</span>
                 </div>
               )}
               <div className="flex justify-between font-semibold text-base pt-2">
@@ -113,7 +119,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
             <h2 className="mb-3 font-semibold">Details</h2>
             <div className="space-y-2">
               <p>
-                <span className="text-ink-600">Type:</span> {TYPE_LABEL[order.orderType as keyof typeof TYPE_LABEL ] ?? order.orderType}
+                <span className="text-ink-600">Type:</span> {TYPE_LABEL[order.orderType as keyof typeof TYPE_LABEL] ?? order.orderType}
               </p>
               <p>
                 <span className="text-ink-600">Customer:</span> {order.customerName || "Walk-in"}
@@ -133,4 +139,3 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
     </div>
   );
 }
-
