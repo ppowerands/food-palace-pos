@@ -105,8 +105,8 @@ export function Shell({
   );
 
   return (
-    <div className="min-h-screen lg:pl-60 print:pl-0">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 lg:block print:hidden">{sidebar}</aside>
+    <div className="min-h-screen print:pl-0">
+      <aside className="group fixed inset-y-0 left-0 z-30 hidden w-60 -translate-x-[90%] hover:translate-x-0 transition-transform duration-300 ease-in-out lg:block print:hidden shadow-xl shadow-black/20">{sidebar}</aside>
 
       {open && (
         <div className="fixed inset-0 z-40 lg:hidden">
