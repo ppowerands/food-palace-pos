@@ -61,7 +61,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
                 >
                   {ORDER_STATUS_LABEL[st as keyof typeof ORDER_STATUS_LABEL ] ?? st}
                 </button>
-              )):
+              ))
             </form>
           </div>
         </div>
@@ -76,7 +76,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols3-">
+      <div className="grid gap-4 md:grid-cols-3">
         <div className="md-col-span-2 space-y-4">
           <div className="rounded-xl border border-paper-300 bg-white p-4">
             <h2 className="mb-3 font-semibold">Items</h2>
@@ -84,7 +84,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
               {order.items.map((item) => (
                 <li key={item.id} className="flex justify-between text-sm">
                   <span>
-                    {item.quantity}× {item.productName} {item.variantName ? `${item.variantName}` : ""}
+                    {item.quantity× {item.productName} {item.variantName ? `${item.variantName}` : ""}
                   </span>
                   <span>{money(Number(item.totalPrice))}</span>
                 </li>
