@@ -60,7 +60,7 @@ export async function placeOrder(d: OrderRequest, ctx: { actor: Actor | null; so
       if (d.type === "DINE_IN" && !d.tableNumber) return fail("Enter your table number.");
       if (typedPhone) {
         const recent = await db.order.count({ where: { source: "WEBSITE", customerPhone: typedPhone, createdAt: { gte: new Date(Date.now() - 60 * 60_000) } } });
-        if (recent >= 5) return fail("You've placed several orders in the last hour. Please call the restaurant if you need help.");
+        if (recent >= 50) return fail("You've placed several orders in the last hour. Please call the restaurant if you need help.");
       }
     }
 
