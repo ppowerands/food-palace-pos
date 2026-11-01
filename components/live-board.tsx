@@ -158,7 +158,7 @@ export function LiveBoard({
 
       <div className="-mx-3 flex gap-3 flex-wrap px-3 pb-3 sm:mx-0 sm:px-0">
         {BOARD_COLUMNS.map((col) => {
-          const list = orders.filter((o) => statusOf(o) === col);
+          const list = orders.filter((o) => statusOf(o) === col).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
           const canDrop = !!dragging;
           return (
             <section
