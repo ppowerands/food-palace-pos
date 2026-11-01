@@ -61,7 +61,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
                 >
                   {st}
                 </button>
-              ))
+              ))}
             </form>
           </div>
         </div>
