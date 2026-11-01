@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/db";
+import { db } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
 import { formatInZone } from "@/lib/dates";
 import { OrderStatusBadge, PaymentStatusBadge } from "@/components/status-badge";
@@ -8,7 +8,7 @@ import { changeOrderStatus } from "@/lib/actions/order-flow";
 import { ORDER_STATUS_LABEL, TYPE_LABEL } from "@/lib/status";
 
 export default async function OrderDetailsPage({ params }: { params: { id: string } }) {
-  const order = await prisma.order.findUnique({
+  const order = await db.order.findUnique({
     where: { id: params.id },
     include: {
       items: true,
@@ -19,7 +19,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
   if (!order) {
     notFound();
   }
-
+s
   const money = (n: number) => formatMoney(n, "₦");
 
   return (
